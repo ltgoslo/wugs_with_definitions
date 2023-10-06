@@ -9,7 +9,8 @@ import pandas as pd
 from requests import get
 
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'}
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36',
+}
 
 BAD = ("у̀", "е́", "и́", "о́", "у́", "а́", "я́", "ы́", "à", "э́", "ю́")
 GOOD = ("у", "е", "и", "о", "у", "а", "я", "ы", "а", "э", "ю")
@@ -38,7 +39,7 @@ def read_html_wiktionary(word, results):
                 word_results.append(text)
                 if "ё" in text:
                     word_results.append(text.replace("ё", "е"))
-    text_string = " ".join(word_results) + "\n"
+    text_string = " ".join(word_results)
     print(text_string)
     results.append(text_string)
     return results
@@ -57,7 +58,6 @@ if __name__ == "__main__":
     for word in words:
         words_list.append(word)
         results = read_html_wiktionary(word, results)
-
         time.sleep(3)
     df = pd.DataFrame({"words": words_list, "forms": results})
     df.to_csv("ru_forms.tsv", sep="\t", index=False)
