@@ -15,6 +15,15 @@ HEADERS = {
 BAD = ("у̀", "е́", "и́", "о́", "у́", "а́", "я́", "ы́", "à", "э́", "ю́")
 GOOD = ("у", "е", "и", "о", "у", "а", "я", "ы", "а", "э", "ю")
 
+ADDITIONAL_FORMS = {
+    "любовь": ["любовию", "любовей"],
+    "век": ["в.", "веки"],
+    "апостол": ["ап."],
+    "крушение": ["крушенья"],
+    "ясли": ["ясель"],
+    "собрат": ["собратий"],
+}
+
 
 def strip_accents(s):
     norm = unicodedata.normalize('NFC', s)
@@ -39,6 +48,9 @@ def read_html_wiktionary(word, results):
                 word_results.append(text)
                 if "ё" in text:
                     word_results.append(text.replace("ё", "е"))
+    if word in ADDITIONAL_FORMS:
+        word_results.extend(ADDITIONAL_FORMS[word])
+        print(word_results)
     text_string = " ".join(word_results)
     print(text_string)
     results.append(text_string)
