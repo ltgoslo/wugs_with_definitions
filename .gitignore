@@ -162,8 +162,8 @@ cython_debug/
 # data, embeddings
 *.gz
 *.npz
-dwug_de/
-dwug_en/
+# dwug_de/
+# dwug_en/
 dwug_es/
 dwug_sv/
 nor_dia_change/
