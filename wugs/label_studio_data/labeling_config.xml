@@ -1,0 +1,10 @@
+<View>
+  <Text name="query" value="$my_text"/>
+  <Header value="Select the best cluster of examples for this definition:"/>
+  <View style="display: flex">
+    <View>
+      <Choices name="selection" toName="query" required="true" choice="single-radio" value="$variants">
+      </Choices>
+    </View>
+  </View>
+</View>
