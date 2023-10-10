@@ -162,11 +162,11 @@ cython_debug/
 # data, embeddings
 *.gz
 *.npz
-# dwug_de/
-# dwug_en/
-dwug_es/
-dwug_sv/
-nor_dia_change/
-rushifteval_public/
-RuDSI/
+wugs/dwug_de/
+wugs/dwug_en/
+wugs/dwug_es/
+wugs/dwug_sv/
+wugs/nor_dia_change/
+wugs/rushifteval_public/
+wugs/RuDSI/
 
