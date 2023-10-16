@@ -26,7 +26,7 @@ if __name__ == "__main__":
     cluster_labels = {}
 
     for _, row in df.iterrows():
-        word = row.Targets + "_nn"
+        word = row.Targets
         cluster = int(row.Clusters)
         label = row.Definitions
         if word not in cluster_labels:
