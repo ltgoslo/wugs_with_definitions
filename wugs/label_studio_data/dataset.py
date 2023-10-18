@@ -8,10 +8,12 @@ import logging
 import os
 import random
 
+import numpy as np
 import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 random.seed = 42
+np.random.seed(1)
 
 CLUSTER_NUMBER_COLUMN = 'cluster'
 EXAMPLE_COLUMN = 'context'
@@ -28,7 +30,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--out_path",
-    default=os.path.expanduser("~/PycharmProjects/"),
+    default=os.path.expanduser("wugs/label_studio_data/"),
 )
 
 METHODS = {
@@ -104,19 +106,21 @@ def join_dwug_tables(
         sep="\t",
         quoting=csv.QUOTE_NONE,
     )
-    word_clusters.dropna(inplace=True)
-    word_clusters[CLUSTER_NUMBER_COLUMN] = word_clusters[
-        CLUSTER_NUMBER_COLUMN
-    ].astype(int)
-    clusters_minus_1 += word_clusters[
-        word_clusters[CLUSTER_NUMBER_COLUMN] == -1
-        ].shape[0]
-    word_clusters = word_clusters[
-        word_clusters[CLUSTER_NUMBER_COLUMN] != -1
-        ]
+
     word_clusters = word_uses.join(
         word_clusters.set_index("identifier"), on="identifier",
     )
+    word_clusters.dropna(inplace=True)
+    word_clusters[CLUSTER_NUMBER_COLUMN] = word_clusters[
+        CLUSTER_NUMBER_COLUMN
+    ].astype(str)
+
+    clusters_minus_1 += word_clusters[
+        word_clusters[CLUSTER_NUMBER_COLUMN] == "-1"
+        ].shape[0]
+    word_clusters = word_clusters[
+        word_clusters[CLUSTER_NUMBER_COLUMN] != "-1"
+        ]
     joined_dwug_tables_dict[word] = word_clusters
     return clusters_minus_1, joined_dwug_tables_dict
 
@@ -138,7 +142,9 @@ def get_random_uses(
     random_uses = {}
     contexts_list, contexts_list_html = [], []
 
-    unique_clusters = word_clusters_with_uses[CLUSTER_NUMBER_COLUMN].unique()
+    unique_clusters = word_clusters_with_uses[
+        CLUSTER_NUMBER_COLUMN
+    ].unique().tolist()
     for cluster_number in unique_clusters:
         this_cluster = word_clusters_with_uses[
             word_clusters_with_uses[CLUSTER_NUMBER_COLUMN] == cluster_number
@@ -164,7 +170,7 @@ def get_random_uses(
             not_this_cluster = contexts_df[
                 contexts_df[CLUSTER_NUMBER_COLUMN] != cluster_number
             ]
-            wrong = not_this_cluster.sample(n=1).iloc[0]
+            wrong = not_this_cluster.sample(n=1, random_state=42).iloc[0]
             random_uses[cluster_number] = [
                 {
                     "value": str(wrong[CLUSTER_NUMBER_COLUMN]),
@@ -190,6 +196,10 @@ def get_word_clusters(predictions_folder, args):
     clusters_minus_1, one_use_clusters, two_use_cluster = 0, 0, 0
     one_clusters = 0
 
+    random_uses_path = os.path.join(
+        os.path.expanduser(args.out_path),
+        f"random_uses-{args.lang}.json"
+        )
     joined_dwug_tables_dict, random_uses_dict = {}, {}
     for word_path in glob(predictions_folder):
         word = os.path.split(word_path)[-1]
@@ -199,14 +209,22 @@ def get_word_clusters(predictions_folder, args):
             clusters_minus_1,
             joined_dwug_tables_dict,
         )
-        word_clusters_with_uses = joined_dwug_tables_dict[word]
-        two_use_cluster, one_use_clusters, one_clusters, random_uses = get_random_uses(
-            word_clusters_with_uses,
-            two_use_cluster,
-            one_use_clusters,
-            one_clusters,
-        )
-        random_uses_dict[word] = random_uses
+        if not os.path.exists(random_uses_path):
+            word_clusters_with_uses = joined_dwug_tables_dict[word]
+            two_use_cluster, one_use_clusters, one_clusters, random_uses = get_random_uses(
+                word_clusters_with_uses,
+                two_use_cluster,
+                one_use_clusters,
+                one_clusters,
+            )
+            random_uses_dict[word] = random_uses
+
+    if not os.path.exists(random_uses_path):
+        with open(random_uses_path, "w", encoding="utf8") as f:
+            json.dump(random_uses_dict, f)
+    else:
+        with open(random_uses_path, "r", encoding="utf8") as f:
+            random_uses_dict = json.load(f)
     logging.info(f"Number of clusters labeled with -1: {clusters_minus_1}")
     logging.info(f"Number of singleton clusters: {one_use_clusters}")
     logging.info(f"Number of clusters with two uses: {two_use_cluster}")
@@ -270,7 +288,7 @@ def get_definitions_predicted_for_cluster(
             clusters_list,
             contexts_list,
         )
-
+        cluster_number = str(cluster_number)
         if random_use.get(cluster_number) is not None:
             variants = copy(random_use[cluster_number])
             variants.append(
@@ -356,9 +374,9 @@ def pass_folder(
             sep="\t",
         )
         predicted_definitions[CLUSTER_NUMBER_COLUMN] = \
-            predicted_definitions.cluster.astype(int)
+            predicted_definitions.cluster.astype(str)
         predicted_definitions = predicted_definitions[
-            predicted_definitions.cluster != -1]
+            predicted_definitions.cluster != "-1"]
 
         if predicted_definitions.shape[0] > 1:
             this_word_uses = joined_dwug_tables_dict[word]
@@ -382,28 +400,6 @@ def pass_folder(
                     word_definitions_dict
                 )
     return label_data, word_definitions_dict
-
-
-def count_unique_definitions(word_definitions_dict):
-    before, after = 0, 0
-    logging.info("Counting unique definitions by system")
-    for word, definitions in word_definitions_dict.items():
-        if definitions:
-            current_unique = len(definitions[0]) + len(definitions[1]) + len(
-                definitions[2]
-            )
-            before += current_unique
-            new_unique = len(
-                (definitions[0].union(definitions[1])).union(definitions[2]))
-            after += new_unique
-            if current_unique != new_unique:
-                for method, method_definitions in zip(METHODS, definitions):
-                    message = f"{method_definitions} for {word} by {method}"
-                    logging.info(message)
-    logging.info(
-        f"Before removing same definitions from different systems: {before}")
-    logging.info(
-        f"After removing same definitions from different systems: {after}")
 
 
 def main():
@@ -433,7 +429,6 @@ def main():
         )
 
     logging.info(f"{len(label_data)} examples to annotate in total")
-
     random.shuffle(label_data)
     if not os.path.exists(args.out_path):
         os.mkdir(args.out_path)
