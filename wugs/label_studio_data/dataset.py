@@ -35,6 +35,11 @@ parser.add_argument(
 
 METHODS = {
     "en": (
+        "glossreader_v1",
+        "mt0-definition-en-xl",
+        "lesk",
+    ),
+    "en_test": (
         "pilot_glmlarge_wordnet_l1norm_top3",
         "pilot_flan-t5-definition-en-xl",
         "lesk",
@@ -189,8 +194,9 @@ def get_word_clusters(predictions_folder, args):
     :param args: command line args
     :return: dict of joined dwug tables by word, dict of random uses by word
     """
+    lang = args.lang.split("_")[0]
     dwug_path = os.path.expanduser(
-        f"{args.gloss_repo}/wugs/dwug_{args.lang}/",
+        f"{args.gloss_repo}/wugs/dwug_{lang}/",
     )
     # track how many samples are removed and why
     clusters_minus_1, one_use_clusters, two_use_cluster = 0, 0, 0
@@ -198,7 +204,7 @@ def get_word_clusters(predictions_folder, args):
 
     random_uses_path = os.path.join(
         os.path.expanduser(args.out_path),
-        f"random_uses-{args.lang}.json"
+        f"random_uses-{lang}.json"
         )
     joined_dwug_tables_dict, random_uses_dict = {}, {}
     for word_path in glob(predictions_folder):
@@ -379,7 +385,11 @@ def pass_folder(
             predicted_definitions.cluster != "-1"]
 
         if predicted_definitions.shape[0] > 1:
-            this_word_uses = joined_dwug_tables_dict[word]
+            try:
+                this_word_uses = joined_dwug_tables_dict[word]
+            except KeyError as key_error:
+                logging.error(predictions_folder)
+                raise key_error
             random_use = random_uses_dict[word]
             if random_use:
                 definitions, contexts_html_list = get_definitions_predicted_for_cluster(
@@ -406,11 +416,11 @@ def main():
     label_data = []
     args = parser.parse_args()
     predictions_folder = os.path.join(args.gloss_repo, "predictions")
-
+    lang = args.lang.split("_")[0]
     joined_dwug_tables_dict, random_uses_dict = get_word_clusters(
         os.path.join(
             predictions_folder,
-            f"{METHODS[args.lang][0]}/dwug_{args.lang}/*",
+            f"{METHODS[args.lang][0]}/dwug_{lang}/*",
         ),
         args,
     )
@@ -420,7 +430,7 @@ def main():
         label_data, word_definitions_dict = pass_folder(
             os.path.join(
                 predictions_folder,
-                f"{method}/dwug_{args.lang}/*",
+                f"{method}/dwug_{lang}/*",
             ),
             label_data,
             joined_dwug_tables_dict,
