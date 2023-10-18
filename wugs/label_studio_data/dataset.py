@@ -48,6 +48,19 @@ METHODS = {
         "mt0-definition-en-xl",
         "pilot_glmlarge_wordnet_l1norm_top3",
     ),
+    "no1": (
+        "mt0-definition-no-xl",
+    ),
+"no2": (
+        "mt0-definition-no-xl",
+    )
+}
+DWUGS = {
+    "en": "dwug_en",
+    "de": "dwug_de",
+    "en_test": "dwug_en",
+    "no1": "nor_dia_change/subset1",
+    "no2": "nor_dia_change/subset2",
 }
 
 
@@ -98,19 +111,32 @@ def join_dwug_tables(
     :param joined_dwug_tables_dict: dict to save joined tables
     :return: number of clusters labeled -1, dict of joined tables by word
     """
-    word_uses = pd.read_csv(
-        os.path.join(dwug_path, "data", word, "uses.csv"), sep="\t",
-        quoting=csv.QUOTE_NONE,
-    )
+    try:
+        word_uses = pd.read_csv(
+            os.path.join(dwug_path, "data", word, "uses.csv"), sep="\t",
+            quoting=csv.QUOTE_NONE,
+        )
+    except FileNotFoundError:
+        word_uses = pd.read_csv(
+            os.path.join(dwug_path, "data", word, "uses.tsv"), sep="\t",
+            quoting=csv.QUOTE_NONE,
+        )
 
     clusters_dir = os.path.join(dwug_path, "clusters/opt")
     if not os.path.exists(clusters_dir):  # no opt in RuDSI data
         clusters_dir = os.path.join(dwug_path, "clusters")
-    word_clusters = pd.read_csv(
-        os.path.join(clusters_dir, f"{word}.csv"),
-        sep="\t",
-        quoting=csv.QUOTE_NONE,
-    )
+    try:
+        word_clusters = pd.read_csv(
+            os.path.join(clusters_dir, f"{word}.csv"),
+            sep="\t",
+            quoting=csv.QUOTE_NONE,
+        )
+    except FileNotFoundError:
+        word_clusters = pd.read_csv(
+            os.path.join(clusters_dir, f"{word}.tsv"),
+            sep="\t",
+            quoting=csv.QUOTE_NONE,
+        )
     word_clusters.dropna(inplace=True)
     word_clusters = word_uses.join(
         word_clusters.set_index("identifier"), on="identifier",
@@ -174,7 +200,7 @@ def get_random_uses(
         for cluster_number in set(contexts_list):
             not_this_cluster = contexts_df[
                 contexts_df[CLUSTER_NUMBER_COLUMN] != cluster_number
-            ]
+                ]
             wrong = not_this_cluster.sample(n=1, random_state=42).iloc[0]
             random_uses[cluster_number] = [
                 {
@@ -194,9 +220,9 @@ def get_word_clusters(predictions_folder, args):
     :param args: command line args
     :return: dict of joined dwug tables by word, dict of random uses by word
     """
-    lang = args.lang.split("_")[0]
+
     dwug_path = os.path.expanduser(
-        f"{args.gloss_repo}/wugs/dwug_{lang}/",
+        f"{args.gloss_repo}/wugs/{DWUGS[args.lang]}/",
     )
     # track how many samples are removed and why
     clusters_minus_1, one_use_clusters, two_use_cluster = 0, 0, 0
@@ -204,8 +230,8 @@ def get_word_clusters(predictions_folder, args):
 
     random_uses_path = os.path.join(
         os.path.expanduser(args.out_path),
-        f"random_uses-{lang}.json"
-        )
+        f"random_uses-{args.lang}.json"
+    )
     joined_dwug_tables_dict, random_uses_dict = {}, {}
     for word_path in glob(predictions_folder):
         word = os.path.split(word_path)[-1]
