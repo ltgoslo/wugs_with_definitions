@@ -106,11 +106,11 @@ def join_dwug_tables(
         sep="\t",
         quoting=csv.QUOTE_NONE,
     )
-
+    word_clusters.dropna(inplace=True)
     word_clusters = word_uses.join(
         word_clusters.set_index("identifier"), on="identifier",
     )
-    word_clusters.dropna(inplace=True)
+
     word_clusters[CLUSTER_NUMBER_COLUMN] = word_clusters[
         CLUSTER_NUMBER_COLUMN
     ].astype(str)
