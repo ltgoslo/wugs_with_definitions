@@ -8,12 +8,10 @@ import logging
 import os
 import random
 
-import numpy as np
 import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 random.seed = 42
-np.random.seed(1)
 
 CLUSTER_NUMBER_COLUMN = 'cluster'
 EXAMPLE_COLUMN = 'context'
@@ -46,12 +44,12 @@ METHODS = {
     ),
     "de": (
         "mt0-definition-en-xl",
-        "pilot_glmlarge_wordnet_l1norm_top3",
+        "glossreader_v1",
     ),
     "no1": (
         "mt0-definition-no-xl",
     ),
-"no2": (
+    "no2": (
         "mt0-definition-no-xl",
     )
 }
@@ -161,6 +159,8 @@ def get_random_uses(
         two_use_cluster,
         one_use_clusters,
         one_clusters,
+        mapping_dir,
+        word,
 ):
     """
     Select random another cluster for each cluster and get random uses for it
@@ -171,8 +171,8 @@ def get_random_uses(
     :return: stats of clusters and uses, dict of random uses by clusters
     """
     random_uses = {}
-    contexts_list, contexts_list_html = [], []
-
+    clusters_list, contexts_list_html = [], []
+    wrong_clusters_list = []
     unique_clusters = word_clusters_with_uses[
         CLUSTER_NUMBER_COLUMN
     ].unique().tolist()
@@ -184,32 +184,60 @@ def get_random_uses(
             two_use_cluster += 1
         if this_cluster.shape[0] == 1:
             one_use_clusters += 1
-        contexts_list, contexts_list_html = sample_random_uses(
+        clusters_list, contexts_list_html = sample_random_uses(
             this_cluster,
             cluster_number,
-            contexts_list,
+            clusters_list,
             contexts_list_html,
         )
     contexts_df = pd.DataFrame(
         {
-            CLUSTER_NUMBER_COLUMN: contexts_list,
+            CLUSTER_NUMBER_COLUMN: clusters_list,
             EXAMPLE_COLUMN: contexts_list_html,
         },
     )
     if contexts_df.shape[0] > 1:
-        for cluster_number in set(contexts_list):
+        clusters_list = list(set(clusters_list))
+        for cluster_number in clusters_list:  # < 2 uses removed
             not_this_cluster = contexts_df[
                 contexts_df[CLUSTER_NUMBER_COLUMN] != cluster_number
                 ]
-            wrong = not_this_cluster.sample(n=1, random_state=42).iloc[0]
+            this_cluster_uses = contexts_df[
+                contexts_df[CLUSTER_NUMBER_COLUMN] == cluster_number
+                ]
+            not_this_cluster_sample = not_this_cluster.sample(
+                n=1,
+            ).iloc[0]
+            this_cluster_sample = this_cluster_uses.sample(
+                n=1,
+            ).iloc[0]
+            wrong_clusters_list.append(
+                not_this_cluster_sample[CLUSTER_NUMBER_COLUMN],
+            )
             random_uses[cluster_number] = [
                 {
-                    "value": str(wrong[CLUSTER_NUMBER_COLUMN]),
-                    "html": wrong[EXAMPLE_COLUMN],
+                    "value": str(not_this_cluster_sample[CLUSTER_NUMBER_COLUMN]),
+                    "html": not_this_cluster_sample[EXAMPLE_COLUMN],
+                },
+                {
+                    "value": str(cluster_number),
+                    "html": this_cluster_sample[EXAMPLE_COLUMN],
                 }
             ]
+        mapping_df = pd.DataFrame(
+            {
+                CLUSTER_NUMBER_COLUMN: clusters_list,
+                "wrong_cluster": wrong_clusters_list,
+            },
+        )
+        mapping_df.to_csv(
+            f"{mapping_dir}/{word}.tsv",
+            sep="\t",
+            index=False,
+        )
     else:
         one_clusters += 1
+
     return two_use_cluster, one_use_clusters, one_clusters, random_uses
 
 
@@ -220,9 +248,9 @@ def get_word_clusters(predictions_folder, args):
     :param args: command line args
     :return: dict of joined dwug tables by word, dict of random uses by word
     """
-
+    lang = args.lang.split("_")[0]
     dwug_path = os.path.expanduser(
-        f"{args.gloss_repo}/wugs/{DWUGS[args.lang]}/",
+        f"{args.gloss_repo}/wugs/{DWUGS[lang]}/",
     )
     # track how many samples are removed and why
     clusters_minus_1, one_use_clusters, two_use_cluster = 0, 0, 0
@@ -230,8 +258,12 @@ def get_word_clusters(predictions_folder, args):
 
     random_uses_path = os.path.join(
         os.path.expanduser(args.out_path),
-        f"random_uses-{args.lang}.json"
+        "random_uses",
+        f"random_uses-{lang}.json"
     )
+    mapping_dir = os.path.join(args.out_path, f"mappings/{lang}")
+    if not os.path.exists(mapping_dir):
+        os.mkdir(mapping_dir)
     joined_dwug_tables_dict, random_uses_dict = {}, {}
     for word_path in glob(predictions_folder):
         word = os.path.split(word_path)[-1]
@@ -248,6 +280,8 @@ def get_word_clusters(predictions_folder, args):
                 two_use_cluster,
                 one_use_clusters,
                 one_clusters,
+                mapping_dir,
+                word,
             )
             random_uses_dict[word] = random_uses
 
@@ -296,7 +330,6 @@ def get_definitions_predicted_for_cluster(
         all_definitions_by_word,
         word,
         predictions_folder,
-        this_word,
         random_use,
 ):
     definitions, clusters_list, contexts_html_list, contexts_list = [], [], [], []
@@ -310,27 +343,10 @@ def get_definitions_predicted_for_cluster(
             word,
             predictions_folder,
         )
-
-        this_cluster = this_word[
-            this_word[CLUSTER_NUMBER_COLUMN] == cluster_number
-            ]
-        _, contexts_list = sample_random_uses(
-            this_cluster,
-            cluster_number,
-            clusters_list,
-            contexts_list,
-        )
         cluster_number = str(cluster_number)
         if random_use.get(cluster_number) is not None:
-            variants = copy(random_use[cluster_number])
-            variants.append(
-                {
-                    "value": str(cluster_number),
-                    "html": contexts_list[-1],
-                }
-            )
             definitions.append(definition)
-            contexts_html_list.append(variants)
+            contexts_html_list.append(random_use[cluster_number])
     return definitions, contexts_html_list
 
 
@@ -411,20 +427,14 @@ def pass_folder(
             predicted_definitions.cluster != "-1"]
 
         if predicted_definitions.shape[0] > 1:
-            try:
-                this_word_uses = joined_dwug_tables_dict[word]
-            except KeyError as key_error:
-                logging.error(predictions_folder)
-                raise key_error
-            random_use = random_uses_dict[word]
-            if random_use:
+            random_use = random_uses_dict.get(word)
+            if (random_use is not None) and random_use:
                 definitions, contexts_html_list = get_definitions_predicted_for_cluster(
                     predicted_definitions,
                     all_definitions,
                     all_definitions_by_word,
                     word,
                     predictions_folder,
-                    this_word_uses,
                     random_use,
                 )
                 label_data, word_definitions_dict = convert_to_label_studio_format(
