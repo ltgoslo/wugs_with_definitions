@@ -11,7 +11,6 @@ import random
 import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
-random.seed = 42
 
 CLUSTER_NUMBER_COLUMN = 'cluster'
 EXAMPLE_COLUMN = 'context'
@@ -51,14 +50,17 @@ METHODS = {
     ),
     "no2": (
         "mt0-definition-no-xl",
+    ),
+    "ru_ru": (
+        "mt0-definition-ru-xl",
     )
 }
 DWUGS = {
     "en": "dwug_en",
     "de": "dwug_de",
-    "en_test": "dwug_en",
     "no1": "nor_dia_change/subset1",
     "no2": "nor_dia_change/subset2",
+    "ru": "RuDSIfixed",
 }
 
 
@@ -135,14 +137,17 @@ def join_dwug_tables(
             sep="\t",
             quoting=csv.QUOTE_NONE,
         )
+
     word_clusters.dropna(inplace=True)
     word_clusters = word_uses.join(
         word_clusters.set_index("identifier"), on="identifier",
     )
+    if "Ru" in dwug_path:
+        word_clusters.dropna(subset=[CLUSTER_NUMBER_COLUMN], inplace=True)  # nan in clusters appears after join in RuDSI
 
     word_clusters[CLUSTER_NUMBER_COLUMN] = word_clusters[
         CLUSTER_NUMBER_COLUMN
-    ].astype(str)
+    ].astype(int).astype(str) # to int because of nans in Ru
 
     clusters_minus_1 += word_clusters[
         word_clusters[CLUSTER_NUMBER_COLUMN] == "-1"
@@ -369,7 +374,8 @@ def convert_to_label_studio_format(
             seen_definitions.append(definition)
             cluster_data = {}
             cluster_data["data"] = {
-                "my_text": f"{word.upper()}: <b>{definition.upper()}</b>"}
+                "my_text": f"{word.upper()}: <b>{definition.upper()}</b>"
+            }
 
             cluster_data["data"]["variants"] = copy(contexts)
             random.shuffle(cluster_data["data"]["variants"])
