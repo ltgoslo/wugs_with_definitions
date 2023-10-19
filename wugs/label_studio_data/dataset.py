@@ -259,7 +259,7 @@ def get_word_clusters(predictions_folder, args):
     )
     # track how many samples are removed and why
     clusters_minus_1, one_use_clusters, two_use_cluster = 0, 0, 0
-    one_clusters = 0
+    one_clusters, good_clusters = 0, 0
 
     random_uses_path = os.path.join(
         os.path.expanduser(args.out_path),
@@ -289,7 +289,11 @@ def get_word_clusters(predictions_folder, args):
                 word,
             )
             random_uses_dict[word] = random_uses
-
+        try:
+            mapping_df = pd.read_csv(f"{mapping_dir}/{word}.tsv", sep="\t")
+            good_clusters += mapping_df.shape[0]
+        except FileNotFoundError:
+            continue
     if not os.path.exists(random_uses_path):
         with open(random_uses_path, "w", encoding="utf8") as f:
             json.dump(random_uses_dict, f)
@@ -302,6 +306,9 @@ def get_word_clusters(predictions_folder, args):
     logging.info(
         f"Number of words where one cluster only remained after removing singletons, -1: {one_clusters}",
     )
+    logging.info(f"Number of good clusters: {good_clusters}")
+    total_number_of_clusters = sum([cluster_df[CLUSTER_NUMBER_COLUMN].unique().shape[0] for cluster_df in joined_dwug_tables_dict.values()]) + clusters_minus_1
+    logging.info(f"Total number of clusters: {total_number_of_clusters}")
     return joined_dwug_tables_dict, random_uses_dict
 
 
