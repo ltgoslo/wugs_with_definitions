@@ -27,6 +27,12 @@ METHODS = {
     "ru_ru": (
         "mt0-definition-ru-xl",
     ),
+    "no1_en1": (
+        "mt0-definition-en-xl",
+    ),
+    "no2_en2": (
+        "mt0-definition-en-xl",
+    ),
 }
 CLUSTER_NUMBER_COLUMN = 'cluster'
 DWUGS = {
@@ -54,7 +60,7 @@ def parse_args():
     parser.add_argument(
         "--lang",
         help="languages",
-        choices=("en", "de", "no1", "no2", "ru_ru")
+        choices=("en", "de", "no1", "no2", "ru_ru", "no1_en1", "no2_en2")
     )
     parser.add_argument(
         "--gloss_repo",
@@ -87,11 +93,12 @@ def main():
     for method in METHODS[args.lang]:
         y_true, y_pred = [], []
         for word in os.listdir(os.path.join(predictions_folder,
-                                        f"{method}/dwug_{lang}")):
+                                            f"{method}/dwug_{lang}")):
             predictions_path = os.path.join(predictions_folder,
-                                        f"{method}/dwug_{lang}/{word}/cluster_gloss.tsv")
+                                            f"{method}/dwug_{lang}/{word}/cluster_gloss.tsv")
 
-            mapping_path = os.path.join(gloss_repo, f"wugs/label_studio_data/mappings/{lang}/{word}.tsv")
+            mapping_path = os.path.join(gloss_repo,
+                                        f"wugs/label_studio_data/mappings/{lang}/{word}.tsv")
             try:
                 mapping = pd.read_csv(mapping_path, sep="\t").astype(str)
             except FileNotFoundError:  # no annotation for this word e.g. if all its clusters are -1 etc.
@@ -103,14 +110,18 @@ def main():
                 clusters_and_definitions[CLUSTER_NUMBER_COLUMN] != "-1"]
 
             for row in clusters_and_definitions.iterrows():
-                cluster_1, definition = row[1][CLUSTER_NUMBER_COLUMN], row[1]["gloss"]
+                cluster_1, definition = row[1][CLUSTER_NUMBER_COLUMN], row[1][
+                    "gloss"]
                 word_gloss = f"{word.upper()}: <b>{definition.upper()}</b>"
-                cluster_2 = mapping[mapping[CLUSTER_NUMBER_COLUMN] == cluster_1]["wrong_cluster"]
+                cluster_2 = \
+                mapping[mapping[CLUSTER_NUMBER_COLUMN] == cluster_1][
+                    "wrong_cluster"]
                 if cluster_2.shape[0]:  # maybe cluster with < 3 usages
                     cluster_2 = cluster_2.iloc[0]
                 else:
                     continue
-                cluster_true = annotations_dict.get((word_gloss, cluster_1, cluster_2))
+                cluster_true = annotations_dict.get(
+                    (word_gloss, cluster_1, cluster_2))
                 if cluster_true is None:
                     cluster_true = annotations_dict.get(
                         (word_gloss, cluster_2, cluster_1))
