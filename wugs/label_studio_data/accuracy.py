@@ -22,7 +22,10 @@ METHODS = {
     ),
     "no2": (
         "mt0-definition-no-xl",
-    )
+    ),
+    "ru_ru": (
+        "mt0-definition-ru-xl",
+    ),
 }
 CLUSTER_NUMBER_COLUMN = 'cluster'
 DWUGS = {
@@ -30,6 +33,7 @@ DWUGS = {
     "de": "dwug_de",
     "no1": "nor_dia_change/subset1",
     "no2": "nor_dia_change/subset2",
+    "ru": "RuDSIfixed",
 }
 WORDS_MAPPING = {
     "Engpass": "Engpaß",
@@ -49,7 +53,7 @@ def parse_args():
     parser.add_argument(
         "--lang",
         help="languages",
-        choices=("en", "de", "no1", "no2")
+        choices=("en", "de", "no1", "no2", "ru_ru")
     )
     parser.add_argument(
         "--gloss_repo",
@@ -67,7 +71,7 @@ def main():
     correct_answers = defaultdict(list)
     both = defaultdict(int)
     none = defaultdict(int)
-    lang = args.lang
+    lang = args.lang.split("_")[0]
     gloss_repo = args.gloss_repo
     predictions_folder = os.path.join(gloss_repo, "predictions")
     for sample in annotations:
@@ -77,7 +81,7 @@ def main():
                                                                   "").replace(
             "</b>", "")
         methods_with_this_gloss, clusters_pred = [], []
-        for method in METHODS[lang]:
+        for method in METHODS[args.lang]:
             predictions_path = os.path.join(predictions_folder,
                                             f"{method}/dwug_{lang}/{word}/cluster_gloss.tsv")
             if not os.path.exists(predictions_path):
@@ -88,11 +92,12 @@ def main():
             clusters_and_definitions = pd.read_csv(predictions_path, sep="\t")
             clusters_and_definitions[CLUSTER_NUMBER_COLUMN] = \
                 clusters_and_definitions[CLUSTER_NUMBER_COLUMN].astype(str)
-            clusters_and_definitions = clusters_and_definitions[clusters_and_definitions[CLUSTER_NUMBER_COLUMN] != "-1"]
+            clusters_and_definitions = clusters_and_definitions[
+                clusters_and_definitions[CLUSTER_NUMBER_COLUMN] != "-1"]
 
             cluster_pred = clusters_and_definitions[
                 clusters_and_definitions.gloss.str.lower() == gloss.lower()
-            ]
+                ]
             if cluster_pred.shape[0] > 0:
                 methods_with_this_gloss.append(method)
                 clusters_pred.append(
@@ -122,10 +127,12 @@ def main():
         logging.info(
             f"Accuracy {method}: {round(accuracy * 100, 2)} on {number_of_annotations} annotations",
         )
-        none_metric = round((none[method]/number_of_annotations) * 100, 2)
-        logging.info(f"{method}, definitions that describe none of the clusters {none_metric}")
-        both_metric = round((both[method]/number_of_annotations) * 100, 2)
-        logging.info(f"{method}, definitions that describe both clusters {both_metric}")
+        none_metric = round((none[method] / number_of_annotations) * 100, 2)
+        logging.info(
+            f"{method}, definitions that describe none of the clusters {none_metric}")
+        both_metric = round((both[method] / number_of_annotations) * 100, 2)
+        logging.info(
+            f"{method}, definitions that describe both clusters {both_metric}")
 
 
 if __name__ == '__main__':
