@@ -319,11 +319,12 @@ def get_word_clusters(predictions_folder, args):
         f"Number of words where one cluster only remained after removing singletons, -1: {one_clusters}",
     )
     logging.info(f"Number of good clusters: {good_clusters}")
-    total_number_of_clusters = sum(
-        [cluster_df[CLUSTER_NUMBER_COLUMN].unique().shape[0] for cluster_df in
-         joined_dwug_tables_dict.values()]) + clusters_minus_1
+    lengths = [cluster_df[CLUSTER_NUMBER_COLUMN].unique().shape[0] for
+               cluster_df in
+               joined_dwug_tables_dict.values()]
+    total_number_of_clusters = sum(lengths) + clusters_minus_1
     logging.info(f"Total number of clusters: {total_number_of_clusters}")
-    return joined_dwug_tables_dict, random_uses_dict
+    return joined_dwug_tables_dict, random_uses_dict, good_clusters
 
 
 def check_common_definitions_for_different_words(
@@ -379,70 +380,51 @@ def get_definitions_predicted_for_cluster(
 def convert_to_label_studio_format(
         definitions,
         contexts_html_list,
-        other_methods_word_definitions,
         word,
         label_data,
-        word_definitions_dict,
 ):
-    seen_definitions = []
     for definition, contexts in zip(
             definitions,
             contexts_html_list,
     ):
-        if (definition not in seen_definitions) and (
-                definition not in other_methods_word_definitions
-        ):
-            seen_definitions.append(definition)
-            cluster_data = {}
-            cluster_data["data"] = {
+        cluster_data = {
+            "data": {
                 "my_text": f"{word.upper()}: <b>{definition.upper()}</b>"
-            }
+            },
+        }
 
-            cluster_data["data"]["variants"] = copy(contexts)
-            random.shuffle(cluster_data["data"]["variants"])
-            cluster_data["data"]["variants"].extend(
-                [
-                    {"value": "-2",
-                     "html": '<b>This definition describes none of the clusters</b><hr>'},
-                    {"value": "-3",
-                     "html": '<b>This definition fits both clusters</b><hr>'},
-                ],
-            )
-            assert len(cluster_data["data"]["variants"]) == 4
-            label_data.append(cluster_data)
-    word_definitions_dict[word].append(set(seen_definitions))
-    return label_data, word_definitions_dict
+        cluster_data["data"]["variants"] = copy(contexts)
+        random.shuffle(cluster_data["data"]["variants"])
+        cluster_data["data"]["variants"].extend(
+            [
+                {"value": "-2",
+                 "html": '<b>This definition describes none of the clusters</b><hr>'},
+                {"value": "-3",
+                 "html": '<b>This definition fits both clusters</b><hr>'},
+            ],
+        )
+        assert len(cluster_data["data"]["variants"]) == 4
+        label_data.append(cluster_data)
+    return label_data
 
 
 def pass_folder(
         predictions_folder: str,
         label_data: list,
-        joined_dwug_tables_dict: dict,
-        word_definitions_dict: dict,
         random_uses_dict: dict,
 ):
     """
     Collects predictions from a system's folder
     :param predictions_folder: path to a system's prediction folder
     :param label_data: resulting data in label studio format
-    :param joined_dwug_tables_dict: dict of joined dwug tables by word
-    :param word_definitions_dict: dict to track if other systems generated
-        the same definition for the same word
     :return: data to markup updated with predictions from this system,
 
     """
     # track if the same definitions were generated for different words
     all_definitions, all_definitions_by_word = set(), defaultdict(set)
+    logging.info(predictions_folder)
     for word_path in glob(predictions_folder):
         word = os.path.split(word_path)[-1]
-
-        # track if other systems generated the same definition for
-        # the same word to avoid repetitive annotation tasks
-        other_methods_word_definitions = set()
-        for definitions_set in word_definitions_dict[word]:
-            other_methods_word_definitions = other_methods_word_definitions.union(
-                definitions_set,
-            )
 
         predicted_definitions = pd.read_csv(
             os.path.join(word_path, "cluster_gloss.tsv"),
@@ -464,15 +446,14 @@ def pass_folder(
                     predictions_folder,
                     random_use,
                 )
-                label_data, word_definitions_dict = convert_to_label_studio_format(
+
+                label_data = convert_to_label_studio_format(
                     definitions,
                     contexts_html_list,
-                    other_methods_word_definitions,
                     word,
                     label_data,
-                    word_definitions_dict
                 )
-    return label_data, word_definitions_dict
+    return label_data
 
 
 def main():
@@ -480,14 +461,20 @@ def main():
     args = parser.parse_args()
     predictions_folder = os.path.join(args.gloss_repo, "predictions")
     lang = args.lang.split("_")[0]
-    joined_dwug_tables_dict, random_uses_dict = get_word_clusters(
-        os.path.join(
+    if args.lang != "ru_en":
+        predictions_folder_word_clusters = os.path.join(
             predictions_folder,
             f"{METHODS[args.lang][0]}/dwug_{lang}/*",
-        ),
+        )
+    else:
+        predictions_folder_word_clusters = os.path.join(
+            predictions_folder,
+            "glossreader_v1/RuDSIfixed/*",
+        )
+    joined_dwug_tables_dict, random_uses_dict, good_clusters = get_word_clusters(
+        predictions_folder_word_clusters,
         args,
     )
-    word_definitions_dict = defaultdict(list)
 
     for method in METHODS[args.lang]:
         method_predictions_folder = os.path.join(
@@ -499,32 +486,24 @@ def main():
                 predictions_folder,
                 f"{method}/RuDSIfixed/*",
             )
-        label_data, word_definitions_dict = pass_folder(
+        label_data = pass_folder(
             method_predictions_folder,
             label_data,
-            joined_dwug_tables_dict,
-            word_definitions_dict,
             random_uses_dict,
         )
 
     logging.info(f"{len(label_data)} examples to annotate in total")
+    assert len(label_data) == good_clusters * len(METHODS[args.lang])
     random.shuffle(label_data)
     if not os.path.exists(args.out_path):
         os.mkdir(args.out_path)
     with open(
             os.path.expanduser(
-                f"{args.out_path}/label-studio-{args.lang}.json"),
+                f"{args.out_path}/label-studio-{args.lang}-added-record.json"),
             "w",
             encoding="utf8",
     ) as f:
         json.dump(label_data, f)
-    with open(
-            os.path.expanduser(
-                f"{args.out_path}/label-studio-{args.lang}-test.json"),
-            "w",
-            encoding="utf8",
-    ) as f:
-        json.dump(label_data[:15], f)
 
 
 if __name__ == '__main__':
