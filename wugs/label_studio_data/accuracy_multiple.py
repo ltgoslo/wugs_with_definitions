@@ -36,6 +36,7 @@ METHODS = {
     ),
     "ru_en": (
         "mt0-definition-en-xl",
+"glossreader_v1",
     ),
 }
 CLUSTER_NUMBER_COLUMN = 'cluster'
@@ -113,10 +114,18 @@ def main():
 
     for method in METHODS[args.lang]:
         y_true, y_pred = [], []
-        for word in os.listdir(os.path.join(predictions_folder,
-                                            f"{method}/dwug_{lang}")):
+        predictions_words_folder = os.path.join(predictions_folder,
+                                            f"{method}/dwug_{lang}")
+        if not os.path.exists(predictions_words_folder):
+            predictions_words_folder = os.path.join(predictions_folder,
+                                            f"{method}/RuDSIfixed")
+
+        for word in os.listdir(predictions_words_folder):
             predictions_path = os.path.join(predictions_folder,
                                             f"{method}/dwug_{lang}/{word}/cluster_gloss.tsv")
+            if not os.path.exists(predictions_path):
+                predictions_path = os.path.join(predictions_folder,
+                                                f"{method}/RuDSIfixed/{word}/cluster_gloss.tsv")
 
             mapping_path = os.path.join(gloss_repo,
                                         f"wugs/label_studio_data/mappings/{lang}/{word}.tsv")
