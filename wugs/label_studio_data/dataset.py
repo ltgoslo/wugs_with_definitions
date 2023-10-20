@@ -53,6 +53,12 @@ METHODS = {
     ),
     "ru_ru": (
         "mt0-definition-ru-xl",
+    ),
+"no1_en": (
+        "mt0-definition-en-xl",
+    ),
+"no2_en": (
+        "mt0-definition-en-xl",
     )
 }
 DWUGS = {
@@ -142,7 +148,7 @@ def join_dwug_tables(
     word_clusters = word_uses.join(
         word_clusters.set_index("identifier"), on="identifier",
     )
-    if "Ru" in dwug_path:
+    if ("Ru" in dwug_path) or ("nor" in dwug_path):
         word_clusters.dropna(subset=[CLUSTER_NUMBER_COLUMN], inplace=True)  # nan in clusters appears after join in RuDSI
 
     word_clusters[CLUSTER_NUMBER_COLUMN] = word_clusters[
