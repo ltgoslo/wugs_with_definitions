@@ -54,12 +54,16 @@ METHODS = {
     "ru_ru": (
         "mt0-definition-ru-xl",
     ),
-"no1_en": (
+    "no1_en": (
         "mt0-definition-en-xl",
     ),
-"no2_en": (
+    "no2_en": (
         "mt0-definition-en-xl",
-    )
+    ),
+    "ru_en": (
+        "glossreader_v1",
+        "mt0-definition-en-xl",
+    ),
 }
 DWUGS = {
     "en": "dwug_en",
@@ -149,11 +153,12 @@ def join_dwug_tables(
         word_clusters.set_index("identifier"), on="identifier",
     )
     if ("Ru" in dwug_path) or ("nor" in dwug_path):
-        word_clusters.dropna(subset=[CLUSTER_NUMBER_COLUMN], inplace=True)  # nan in clusters appears after join in RuDSI
+        word_clusters.dropna(subset=[CLUSTER_NUMBER_COLUMN],
+                             inplace=True)  # nan in clusters appears after join in RuDSI
 
     word_clusters[CLUSTER_NUMBER_COLUMN] = word_clusters[
         CLUSTER_NUMBER_COLUMN
-    ].astype(int).astype(str) # to int because of nans in Ru
+    ].astype(int).astype(str)  # to int because of nans in Ru
 
     clusters_minus_1 += word_clusters[
         word_clusters[CLUSTER_NUMBER_COLUMN] == "-1"
@@ -227,7 +232,8 @@ def get_random_uses(
             )
             random_uses[cluster_number] = [
                 {
-                    "value": str(not_this_cluster_sample[CLUSTER_NUMBER_COLUMN]),
+                    "value": str(
+                        not_this_cluster_sample[CLUSTER_NUMBER_COLUMN]),
                     "html": not_this_cluster_sample[EXAMPLE_COLUMN],
                 },
                 {
@@ -313,7 +319,9 @@ def get_word_clusters(predictions_folder, args):
         f"Number of words where one cluster only remained after removing singletons, -1: {one_clusters}",
     )
     logging.info(f"Number of good clusters: {good_clusters}")
-    total_number_of_clusters = sum([cluster_df[CLUSTER_NUMBER_COLUMN].unique().shape[0] for cluster_df in joined_dwug_tables_dict.values()]) + clusters_minus_1
+    total_number_of_clusters = sum(
+        [cluster_df[CLUSTER_NUMBER_COLUMN].unique().shape[0] for cluster_df in
+         joined_dwug_tables_dict.values()]) + clusters_minus_1
     logging.info(f"Total number of clusters: {total_number_of_clusters}")
     return joined_dwug_tables_dict, random_uses_dict
 
@@ -482,11 +490,17 @@ def main():
     word_definitions_dict = defaultdict(list)
 
     for method in METHODS[args.lang]:
-        label_data, word_definitions_dict = pass_folder(
-            os.path.join(
+        method_predictions_folder = os.path.join(
+            predictions_folder,
+            f"{method}/dwug_{lang}/*",
+        )
+        if (lang == "ru") and (method == "glossreader_v1"):
+            method_predictions_folder = os.path.join(
                 predictions_folder,
-                f"{method}/dwug_{lang}/*",
-            ),
+                f"{method}/RuDSIfixed/*",
+            )
+        label_data, word_definitions_dict = pass_folder(
+            method_predictions_folder,
             label_data,
             joined_dwug_tables_dict,
             word_definitions_dict,
