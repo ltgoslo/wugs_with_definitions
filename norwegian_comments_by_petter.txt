@@ -1,0 +1,45 @@
+Norwegian 1
+
+STRØM: FLOM, VELL STADIG OG RIKELIG MENGDE
+KATT: I I SAMMENSETNINGER: LITEN, UBETYDELIG ØY| This one I think was affected by the place name Katten, which seems to be an island. I did not chose this cluster with these place names, but on further inspection maybe that had been a possible choice? But it was strange to do it when it is a place name, not actually the definition of the word, but an explanation of the place?
+REV: ROVDYR SOM BLIR BRUKT SOM INNTEKTSKILDE|Very narrow!
+KATT: I FLERTALL: HUSDYR AV KATTEFAMILIEN, JAMFØR KATTE
+HORISONT: TIDSROM, OMFANG
+LYNG: GRESS SOM VOKSER I LYNGHEI|Comment: "lyng" is not a type of gress. In Norwegian language use, "lyng" usually occupies a semantic space between grasses and bushes, but they are neither.
+BØLGE: NOE SOM MINNER OM EN LITEN MENGDE VÆSKE SOM STRØMMER FRAM I VANNFLATEN|I chose a cluster because I thought the sense was close enough, but the image here is of some small amount of water flowing up, like seeing water come up from the ground into a small pond or something.
+MÅL: NOE SOM BLIR UNDERSØKT, VURDERT ELLER PEKT UT SOM EN MULIGHET, RETTESNOR, RETTESNOR, FORMÅL, RETTESNOR, FORMÅLSPARAGRAF
+OPERASJON: KIRURGISK INNGREP PÅ ØYET|Very narrow!
+REV: SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET SÆRLIG SKREVET|Nonsensical
+REV: LITEN, SAMMENHENGENDE FJORDFORMASJON|A "fjordformasjon" for me would have to be a formation of the actual fjord, like how the water moves and the sides of the fjord, not the ground in the water in the fjord.
+MÅL: NOE EN ARBEIDER FOR, STREVER ETTER Å OPPNÅ, FORMÅL, PLAN, MENING
+LEILIGHET: BOLIG SOM BESTÅR AV ETT ELLER FLERE ROM OG KJØKKEN
+FORHOLD: YTRE VILKÅR, OMSTENDIGHET
+FORHOLD: RELASJON ELLER FORBINDELSE MELLOM TO PERSONER, FENOMENER ELLER LIGNENDE
+BØLGE: BEVEGELSE I LUFT ELLER VÆSKE MED ULIKE RETNINGER
+HORISONT: GRENSELINJE, SÆRLIG OVER ET OMRÅDE
+MÅL: MENGDE AV JORD ELLER GRESS SOM ER Å REGNE SOM EN HEKTAR|Very narrow. Also factually incorrect. "et hektar" is 10 mål. It is also narrow because of "jord eller gress"
+LYNG: GÅRDSPLASS I EN BYDEL|I wonder if this is also affected by place names. In this case it is not possible to deduce the place names from the definition anyway.
+HORISONT: UTSIKT OVER HAVET, SYNSKRETS
+OPERASJON: MILITÆR VIRKSOMHET
+BØLGE: OVERFØRT:|This one I selected one, because it was clear that that was the metaphorical sense, so I read it as "The common sense of this word, but mataphorical (overført)" This might have happened because the dictionaries will first list the more common meanings, and then just write "i overført betydning". 
+LEILIGHET: ANLEDNING
+
+Norwegian 2
+FANE: LUKKET TRÅD FOR EN ORGANISASJON, EN GRUPPE ELLER LIGNENDE
+OPPVARMING: DET Å VARME OPP
+INNSTILLING: HOLDNING
+TAVLE: SKJERM PÅ FORRETNING, BUTIKK ELLER LIGNENDE SOM VISER INNHOLDET AV EN TEKST
+TAVLE: APPARAT TIL Å BEHANDLE ELEKTRISK STRØM MED
+SIDE: DEL AV VIRKSOMHET, EMNE, OMRÅDE
+INNSTILLING: FORSLAG, FRAMLEGG
+KODE: I I BESTEMT FORM ENTALL: REKKEFØLGE AV BOKSTAVER, TALL ELLER LIGNENDE|Double "I", and while the definition is good, it specifies "i bestemt form entall",which is incorrect here. 
+KODE: I OVERFØRT BETYDNING: HEMMELIGHET ELLER BEGRENSNING FOR HVORDAN NOE SKAL GJØRES
+STRØM: BEVEGELSE, BEVEGELSESMØNSTER
+FANE: I OVERFØRT BETYDNING: GRUPPE AV PERSONER SOM ARBEIDER FOR EN SAK ELLER LIGNENDE
+STRØM: ELEKTRISITET SOM FØLGER EN LEDNING
+KODE: REGLER FOR GJENNOMFØRING AV ET TRAKTAT ELLER LIGNENDE
+KANAL: TV-SENDING SOM SENDES PÅ SAMME FREKVENS
+SIDE: RETNING, FLØY
+KANAL: RØR, LEDNING ELLER LIGNENDE SOM ER LAGET FOR LEDNING
+STRØM: FLOM, VELL STADIG OG RIKELIG MENGDE
+
