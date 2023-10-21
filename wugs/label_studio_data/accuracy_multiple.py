@@ -89,16 +89,25 @@ def main():
             anns.append(json.load(f))
 
     for sample1, sample2, sample3 in zip(anns[0], anns[1], anns[2]):
-
-
         cluster_true_1 = sample1['annotations'][0]['result'][0]["value"]["choices"][0]
         cluster_true_2 = \
         sample2['annotations'][0]['result'][0]["value"]["choices"][0]
         cluster_true_3 = \
         sample3['annotations'][0]['result'][0]["value"]["choices"][0]
-        anns_dict[annotations_path[0]].append(cluster_true_1)
-        anns_dict[annotations_path[1]].append(cluster_true_2)
-        anns_dict[annotations_path[2]].append(cluster_true_3)
+        positives = []
+        for cl in (cluster_true_1, cluster_true_2, cluster_true_3):
+            if int(cl) >= 0:
+                positives.append(cl)
+        cl_map = {positives[i]: str(i) for i in range(len(set(positives)))}
+        cl_map["-2"] = "-2"
+        cl_map["-3"] = "-3"
+        cluster_true_1_map = cl_map[cluster_true_1]
+        cluster_true_2_map = cl_map[cluster_true_2]
+        cluster_true_3_map = cl_map[cluster_true_3]
+
+        anns_dict["annotator0"].append(cluster_true_1_map)
+        anns_dict["annotator1"].append(cluster_true_2_map)
+        anns_dict["annotator2"].append(cluster_true_3_map)
         majority = Counter((cluster_true_1, cluster_true_2, cluster_true_3)).most_common(1)[0]
         cluster_true = majority[0]
         if majority[1] == 1:
