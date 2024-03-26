@@ -25,6 +25,9 @@ Within each target word directory, we provide one file named `cluster_gloss.tsv`
 The cluster labels should be used together with the [original word usage graphs](https://www.ims.uni-stuttgart.de/en/research/resources/experiment-data/wugs/) for the corresponding languages.
 As a rule, one can find clusters assigned to every specific WUG usage (sentence) in the `clusters/` directory.
 
+NB: some clusters are too small to generate a meaningful definition (less than 3 usages). 
+In these cases, the definition is accordingly "Too few examples to generate a proper definition!".
+
 ## Citation
 See details in the paper "Enriching Word Usage Graphs with Cluster Definitions" (LREC-COLING'2024) by Mariia Fedorova, Andrey Kutuzov, Nikolay Arefyev and Dominik Schlechtweg.
 
