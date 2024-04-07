@@ -29,7 +29,7 @@ NB: some clusters are too small to generate a meaningful definition (less than 3
 In these cases, the definition is accordingly "Too few examples to generate a proper definition!".
 
 ## Citation
-See details in the paper "Enriching Word Usage Graphs with Cluster Definitions" (LREC-COLING'2024) by Mariia Fedorova, Andrey Kutuzov, Nikolay Arefyev and Dominik Schlechtweg.
+See details in the paper "[Enriching Word Usage Graphs with Cluster Definitions](https://arxiv.org/abs/2403.18024)" (LREC-COLING'2024) by Mariia Fedorova, Andrey Kutuzov, Nikolay Arefyev and Dominik Schlechtweg.
 
 ## Definition generation models:
 - English: [mT0-Definition-En XL](https://huggingface.co/ltg/mt0-definition-en-xl)
