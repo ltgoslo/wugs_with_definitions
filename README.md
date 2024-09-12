@@ -32,6 +32,8 @@ In these cases, the definition is accordingly "Too few examples to generate a pr
 See details in the paper "[Enriching Word Usage Graphs with Cluster Definitions](https://aclanthology.org/2024.lrec-main.546/)" (LREC-COLING'2024) by Mariia Fedorova, Andrey Kutuzov, Nikolay Arefyev and Dominik Schlechtweg.
 
 ## Definition generation models:
+[Code for fine-tuning encoder-decoder models on definition datasets](https://github.com/ltgoslo/definition_modeling/tree/main/code/finetuning)
+
 - English: [mT0-Definition-En XL](https://huggingface.co/ltg/mt0-definition-en-xl)
 - Norwegian: [mT0-Definition-No XL](https://huggingface.co/ltg/mt0-definition-no-xl)
 - Russian: [mT0-Definition-Ru XL](https://huggingface.co/ltg/mt0-definition-ru-xl)
