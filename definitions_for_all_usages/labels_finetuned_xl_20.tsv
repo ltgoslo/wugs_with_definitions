@@ -1,0 +1,137 @@
+Targets	Examples	Definitions	Clusters
+afternoon		The part of the day between noon and evening.	0.0
+attack		A concerted attempt to injure or destroy.	0.0
+attack		An onset of a serious condition.	1.0
+bag		A container for carrying various items, especially one that is portable.	0.0
+ball		A sphere or other object used as the object of a hit.	0.0
+ball		A formal social gathering for dancing.	1.0
+ball		A round solid projectile, such as is used in shooting.	2.0
+ball		A bullet.	3.0
+ball		The male genitalia, especially the testicles.	4.0
+bar		A room or establishment where alcoholic drinks are served over a counter.	0.0
+bar		The body of members of the legal profession, particularly lawyers.	1.0
+bar		A horizontal piece of metal used as a weight.	2.0
+bar		The body of persons qualified to practise law in a particular jurisdiction.	3.0
+bar		A rectangular block of metal, especially one made of tin or lead.	4.0
+bar		A rigid horizontal piece of metal or other material, usually used to fasten or secure something	5.0
+bar		The body of persons admitted to the profession of law in a particular jurisdiction.	6.0
+bar		A long, narrow, flat piece of metal or other substance.	7.0
+bit		A small portion ; a little something.	0.0
+bit		A small part or piece.	1.0
+bit		A shaped piece of metal held in the horses mouth by reins, and used to	2.0
+bit		The cutting or boring part of a tool.	3.0
+bit		A small fragment ; a small piece ; a nibble ; a	4.0
+chairman		The president of a committee, board, or other organization.	0.0
+chef		A professional cook, usually in a restaurant.	0.0
+chef		A chief dish or ingredient.	1.0
+chef		A commander.	2.0
+chef		A commander.	3.0
+circle		To move in circles.	0.0
+contemplation		The act of contemplating ; deep thought or close observation.	0.0
+donkey		A domesticated hoofed mammal of the horse family with a long neck and	0.0
+edge		The border or margin of any solid surface.	0.0
+edge		An advantage.	1.0
+edge		A sharp cutting or piercing quality ; point.	2.0
+edge		a sharp or perceptible quality	3.0
+edge		A border, strip, or border.	4.0
+edge		The sharp cutting surface of a tool or weapon.	5.0
+edge		A sharp or contrasting part of something ; a margin ; a border	6.0
+face		The front part of the head of a human or other animal, featuring the eyes and	0.0
+face		the situation presented to the observer	1.0
+fiction		A literary work in which the subject is invented or the events are fictitious.	0.0
+gas		Any substance that is a mixture of a number of different gases.	0.0
+gas		The accelerator of a car ; the pedal that controls the throttle valve.	1.0
+graft		A grafted shoot or scion ; a grafted plant.	0.0
+graft		Bribery, swindling, or other corrupt practices.	1.0
+grain		Grain of a specified kind, especially wheat.	0.0
+grain		A small, compact particle of a substance.	1.0
+grain		A small, compact particle of a substance.	2.0
+grain		Grain, especially wheat.	3.0
+grain		The texture of wood, leather, etc. as determined by the arrangement of its	4.0
+head		The upper part of the human body, consisting of the skull.	0.0
+head		a person who is in charge	1.0
+head		The top or extreme point of something.	2.0
+head		The top part of anything.	3.0
+heel		The back part of the foot.	0.0
+heel		The back part of a leg.	1.0
+heel		A shoe with a high or pointed end.	2.0
+include		To contain, as parts of a whole ; to comprehend.	0.0
+land		An area of ground, usually with reference to its size or ownership.	0.0
+land		The act of coming down to the earth or other surface.	1.0
+land		The space between the top of a flight of stairs and the floor below.	2.0
+lane		A narrow road, especially one leading from one place to another.	0.0
+lass		A young woman or girl.	0.0
+lass		A cold drink made from milk curdled by yogurt.	1.0
+maxim		A short statement of general truth, a rule of conduct, or a principle	0.0
+multitude		A large number of people or things ; a great amount.	0.0
+ounce		A unit of weight equal to 16 grams, formerly used for liquids and now for	0.0
+part		A distinct portion of something.	0.0
+part		One's share or responsibility ; contribution.	1.0
+part		A role, especially a significant or interesting one.	2.0
+part		A region ; a place ; a location.	3.0
+pick		To grasp and remove with the fingers, hands, or an implement ; to take	0.0
+pick		To gather or remove, especially by the fingers or by the hand.	1.0
+pick		To select or choose.	2.0
+pick		To grasp and remove with the fingers, or by lifting.	3.0
+pick		To find fault with.	4.0
+pick		To select or choose, especially carefully or with difficulty.	5.0
+pick		To select or choose ; to select and take up.	6.0
+pin		To fasten with a brooch, stud, or similar device.	0.0
+pin		To attach ; to rely ; to confide.	1.0
+pin		To fasten with a brooch or other pointed device.	2.0
+plane		An aeroplane.	0.0
+plane		A two-dimensional shape, such as a flat surface.	1.0
+plane		A two-dimensional shape, such as a flat two-dimensional surface, that	2.0
+plane		A flat or level surface.	3.0
+plane		A hand tool with a flat blade for smoothing a surface.	4.0
+plane		A flat or level surface, especially of a three-dimensional object.	5.0
+plane		A tree of the genus Quercus, having smooth, broad leaves	6.0
+player		One who participates in a game.	0.0
+player		A person who acts or performs in a theatrical play.	1.0
+player		A device that can play a particular type of media.	2.0
+player		A participant ; someone involved in something.	3.0
+player		A musician, especially one who plays a particular instrument.	4.0
+prop		Something that supports.	0.0
+prop		a support or pillar	1.0
+prop		an object used on the set of a play or movie to help identify or decorate the set	2.0
+prop		A propeller.	3.0
+prop		Something that supports something else.	4.0
+quilt		A bed covering consisting of a layer of fabric sewn together, often with	0.0
+quilt		A collection of things that are jumbled or woven together.	1.0
+rag		A piece of worn or torn cloth.	0.0
+rag		A piece of worn or torn clothing.	1.0
+rag		A newspaper, especially one regarded as being of low quality.	2.0
+rag		A piece of worn or torn clothing.	3.0
+rally		A large public gathering, usually for a political purpose.	0.0
+rally		The act of gathering together again.	1.0
+record		A document or other means of providing information about past events.	0.0
+record		The highest score or other achievement in a game.	1.0
+record		A phonograph or gramophone cylinder containing an audio recording.	2.0
+relationship		Connection or association ; the state of being related.	0.0
+relationship		The manner in which two or more things are connected or related.	1.0
+risk		The chance of suffering harm ; danger, peril, or loss.	0.0
+savage		A person living in a traditional, especially tribal, rather than civilized society	0.0
+stab		A thrust with a knife or other pointed weapon.	0.0
+stab		A sharp, painful feeling.	1.0
+stab		An attempt, a try.	2.0
+stab		A tentative attempt.	3.0
+stroke		To touch or brush gently with the hand.	0.0
+stroke		An act of striking, especially with the hand, or with a weapon.	1.0
+stroke		A mark made by drawing a pen, pencil, etc. across a	2.0
+thump		A heavy blow, or the sound of such a blow.	0.0
+tip		to cause to tilt	0.0
+tip		To furnish with a point or end.	1.0
+tip		A piece of practical information or advice.	2.0
+tip		To cause to tilt ; to cause to lean.	3.0
+tip		To give ( someone ) a small favor, such as an extra helping of something	4.0
+tip		A gratuity, especially a financial one given to someone in return for a service	5.0
+tip		To give a gratuity to, especially to a performer or to a	6.0
+tree		A large, tall, slender woody plant that has a trunk	0.0
+twist		An act of turning.	0.0
+twist		A turn ; a deviation from the usual.	1.0
+twist		A twisted object.	2.0
+twist		A spiral shape.	3.0
+twist		An unwound portion of a twisted rope, wire, etc	4.0
+word		A single spoken or written utterance.	0.0
+word		Information ; news ; reports.	1.0
+word		A promise, vow, or statement.	2.0

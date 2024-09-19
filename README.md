@@ -4,6 +4,7 @@ They are generated from scratch by fine-tuned encoder-decoder language models.
 The resulting enriched datasets can be helpful for explainable semantic change modeling.
 
 ## Contents
+- [`definitions_for_all_usages'](https://github.com/ltgoslo/wugs_with_definitions/tree/main/definitions_for_all_usages): mapping from usage identifiers to generated definitions
 - [`code/`](https://github.com/ltgoslo/wugs_with_definitions/tree/main/code): various scripts we used in preparing the datasets
 - [`human_evaluation/`](https://github.com/ltgoslo/wugs_with_definitions/tree/main/human_evaluation): everything related to our evaluation efforts
 - [`wug_labels/`](https://github.com/ltgoslo/wugs_with_definitions/tree/main/wug_labels): the cluster labels themselves, the main part.

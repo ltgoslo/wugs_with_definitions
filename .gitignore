@@ -160,7 +160,6 @@ cython_debug/
 .idea/
 
 # data, embeddings
-*.gz
 *.npz
 wugs/dwug_de/
 wugs/dwug_en/
